@@ -19,40 +19,60 @@ PIXI.loader
 function setup() {
     stage.interactive = true;
 
-    var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
-    var texture = PIXI.loader.resources["sprite"].texture;
-    texture.frame = rect;
+        var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
+        var texture = PIXI.loader.resources["sprite"].texture;
+        texture.frame = rect;
 
-    //sprite.scale.set(0.5, 0.50);
-    var arrayOfSprites = [];
-    for (var i = 0; i < JSON.layout[0].square.length; i++) {
-    arrayOfSprites[i] = new PIXI.Sprite(texture);
-    arrayOfSprites[i].scale.set(0.5, 0.5);
-    arrayOfSprites[i].anchor.x = 0.5;
-    arrayOfSprites[i].anchor.y = 0.5;
-    arrayOfSprites[i].x = JSON.layout[0].square[i].pos.x;
-    arrayOfSprites[i].y = JSON.layout[0].square[i].pos.y;
-    stage.addChild(arrayOfSprites[i])
-    }
+        //sprite.scale.set(0.5, 0.50);
+        var arrayOfSprites = [];
+        for (var i = 0; i < JSON.layout[0].square.length; i++) {
+          arrayOfSprites[i] = new PIXI.Sprite(texture);
+          arrayOfSprites[i].scale.set(0.5, 0.5);
+          arrayOfSprites[i].anchor.x = 0.5;
+          arrayOfSprites[i].anchor.y = 0.5;
+          arrayOfSprites[i].x = JSON.layout[0].square[i].pos.x;
+          arrayOfSprites[i].y = JSON.layout[0].square[i].pos.y;
+          stage.addChild(arrayOfSprites[i])
+        }
+
       //for (var i = 0; )
 
-    var rectangleType = JSON.layout[0].type;
-    console.log(types[rectangleType].baseX);
-    var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, )
-    var arrayOfGrass = [];
+        var rectangleType = JSON.layout[0].type;
+        var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
+        var arrayOfGrass = [];
+        var GroundTexture = new PIXI.Texture(texture.baseTexture, groundRect);
+        //GroundTexture.frame = groundRect;
+        for (var i = 0; i < JSON.layout[0].square.length; i++) {
+          arrayOfGrass[i] = new PIXI.Sprite(GroundTexture);
+          //arrayOfSprites[i].scale.set(0.5, 0.5);
+          arrayOfGrass[i].anchor.x = 0.5;
+          arrayOfGrass[i].anchor.y = 0.5;
+          arrayOfGrass[i].x = JSON.layout[0].square[i].pos.x;
+          arrayOfGrass[i].y = JSON.layout[0].square[i].pos.y;
+          arrayOfGrass[i].interactive = true;
+          arrayOfGrass[i].clickCounter = 0;
+          arrayOfGrass[i].click = function() {
+            if (this.clickCounter >= 3) {
+              this.clickCounter = 0;
+              this.visible = false;
+            }
+            this.clickCounter += 1;
+          };
+          stage.addChild(arrayOfGrass[i]);
+        }
 
-      renderer.render(stage);
 
-//    animationLoop();
+
+
+    animationLoop();
 
 }
 
-/*function animationLoop() {
+function animationLoop() {
   requestAnimationFrame(animationLoop);
+    renderer.render(stage);
+}
 
-
-
-}*/
 const types = {
     2: {baseX: 525, baseY: 1104}
 };
