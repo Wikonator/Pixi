@@ -13,7 +13,7 @@ PIXI.loader
   .add("sprite", "images/Sheet1.png")
   .load(setup);
 
-  var sprite;
+  var sprite; //   525 1104
 
 
 function setup() {
@@ -34,6 +34,12 @@ function setup() {
     arrayOfSprites[i].y = JSON.layout[0].square[i].pos.y;
     stage.addChild(arrayOfSprites[i])
     }
+      //for (var i = 0; )
+
+    var rectangleType = JSON.layout[0].type;
+    console.log(types[rectangleType].baseX);
+    var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, )
+    var arrayOfGrass = [];
 
       renderer.render(stage);
 
@@ -47,6 +53,9 @@ function setup() {
 
 
 }*/
+const types = {
+    2: {baseX: 525, baseY: 1104}
+};
 
 const JSON = { layout:
    [ { idx: { x: 0, y: 0 },
@@ -72,7 +81,7 @@ const JSON = { layout:
             type: 10010103,
             rm: false,
             hw: false },
-          { pos: { x: 400, y: 168 },
+          { pos: { x: 400, y: 170 },
             idx: { x: 2, y: 1 },
             oid: '0021',
             type: 10010103,
