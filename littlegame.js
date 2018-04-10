@@ -9,9 +9,17 @@ document.getElementById('display').appendChild(renderer.view);
 
 var stage = new PIXI.Container();
 
-PIXI.loader
-  .add("sprite", "images/Sheet1.png")
-  .load(setup);
+console.log("I happen");
+      PIXI.loader
+        .add(["images/Sheet1.png", "images/exoWalkSheetTextures.png", "images/exoWalkSheetJson.json"])
+        .on('complete', lockedAndLoaded)
+
+function lockedAndLoaded() {
+        console.log("locking");
+        PIXI.loader.load(setup);
+        console.log("loading");
+}
+
 
   var sprite; //   525 1104
 
@@ -20,7 +28,11 @@ function setup() {
     stage.interactive = true;
 
         var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
-        var texture = PIXI.loader.resources["sprite"].texture;
+
+        var texture = PIXI.loader.resources["images/Sheet1.png"].texture;
+        var exoTexture = PIXI.loader.resources["images/exoWalkSheetTextures.png"].texture;
+        var exoId = PIXI.loader.resources["images/exoWalkSheetJson.json"].textures;
+        console.log(exoId);
         texture.frame = rect;
 
         //sprite.scale.set(0.5, 0.50);
@@ -60,6 +72,10 @@ function setup() {
           };
           stage.addChild(arrayOfGrass[i]);
         }
+        var sprite = new PIXI.Sprite(
+          exoId["01.002_00000.png"]
+        );
+        stage.addChild(sprite);
 
 
 
@@ -137,3 +153,19 @@ const JSON = { layout:
             type: 10010103,
             rm: false,
             hw: false } ] } ] }
+
+            // ⠰⡿⠿⠛⠛⠻⠿⣷
+            // ⠀⠀⠀⠀⠀⠀⣀⣄⡀⠀⠀⠀⠀⢀⣀⣀⣤⣄⣀⡀
+            // ⠀⠀⠀⠀⠀⢸⣿⣿⣷⠀⠀⠀⠀⠛⠛⣿⣿⣿⡛⠿⠷
+            // ⠀⠀⠀⠀⠀⠘⠿⠿⠋⠀⠀⠀⠀⠀⠀⣿⣿⣿⠇
+            // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠁
+            //
+            // ⠀⠀⠀⠀⣿⣷⣄⠀⢶⣶⣷⣶⣶⣤⣀
+            // ⠀⠀⠀⠀⣿⣿⣿⠀⠀⠀⠀⠀⠈⠙⠻⠗
+            // ⠀⠀⠀⣰⣿⣿⣿⠀⠀⠀⠀⢀⣀⣠⣤⣴⣶⡄
+            // ⠀⣠⣾⣿⣿⣿⣥⣶⣶⣿⣿⣿⣿⣿⠿⠿⠛⠃
+            // ⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄
+            // ⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡁
+            // ⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁
+            // ⠀⠀⠛⢿⣿⣿⣿⣿⣿⣿⡿⠟
+            // ⠀⠀⠀⠀⠀⠉⠉⠉
