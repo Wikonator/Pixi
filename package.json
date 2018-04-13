@@ -1,0 +1,23 @@
+{
+  "name": "pixi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "pixi.js",
+  "scripts": {
+    "start": "http-server .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wikonator/Pixi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wikonator/Pixi/issues"
+  },
+  "homepage": "https://github.com/Wikonator/Pixi#readme",
+  "devDependencies": {
+    "http-server": "^0.11.1"
+  }
+}

@@ -1,4 +1,5 @@
-PIXI.utils.sayHello();
+﻿PIXI.utils.sayHello();
+const socket = io.connect('http://89.173.200.63:8070');
 
 var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom je canvas
   transparent: true,
@@ -8,32 +9,41 @@ var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom 
 document.getElementById('display').appendChild(renderer.view);
 
 var stage = new PIXI.Container();
+var loader = new PIXI.loaders.Loader();
+    //secondLoader = new PIXI.loaders.Loader(),
+  //thirdLoader = new PIXI.loaders.Loader();
 
-console.log("I happen");
-      PIXI.loader
-        .add(["images/Sheet1.png", "images/exoWalkSheetTextures.png", "images/exoWalkSheetJson.json"])
-        .on('complete', lockedAndLoaded)
+loader.add('sprite', 'images/Sheet1.png')
+  .add('exoWalkSheet', 'images/ExoWalkTex.png')
+  .add('exoWalkJson', 'images/ExoWalkTex.json')
+  .load(setup);
 
-function lockedAndLoaded() {
-        console.log("locking");
-        PIXI.loader.load(setup);
-        console.log("loading");
+
+var data = {user: "name"};
+socket.emit('onLoad', data);
+socket.on('onRefresh', function(data){
+	console.log(data);
+});
+
+function thisJustFired() {
+    socket.emit('onLoad',
+    console.log("thisJustFired")
+    );
 }
-
-
-  var sprite; //   525 1104
-
-
 function setup() {
     stage.interactive = true;
-
+    console.log("habbening");
         var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
 
-        var texture = PIXI.loader.resources["images/Sheet1.png"].texture;
-        var exoTexture = PIXI.loader.resources["images/exoWalkSheetTextures.png"].texture;
-        var exoId = PIXI.loader.resources["images/exoWalkSheetJson.json"].textures;
-        console.log(exoId);
+        var exoId = loader.resources["exoWalkJson"].textures;
+        var texture = loader.resources["sprite"].texture;
+        var secondTexture = loader.resources["exoWalkSheet"].texture;
         texture.frame = rect;
+        secondTexture.frame = new PIXI.Rectangle( 0, 0, 340, 175 );
+        console.log(loader.resources);
+
+        var exoSprite = new PIXI.Sprite( exoId["1_00000.png"]);
+        console.log(exoId);
 
         //sprite.scale.set(0.5, 0.50);
         var arrayOfSprites = [];
@@ -46,8 +56,6 @@ function setup() {
           arrayOfSprites[i].y = JSON.layout[0].square[i].pos.y;
           stage.addChild(arrayOfSprites[i])
         }
-
-      //for (var i = 0; )
 
         var rectangleType = JSON.layout[0].type;
         var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
@@ -72,13 +80,8 @@ function setup() {
           };
           stage.addChild(arrayOfGrass[i]);
         }
-        var sprite = new PIXI.Sprite(
-          exoId["01.002_00000.png"]
-        );
-        stage.addChild(sprite);
 
-
-
+        stage.addChild(exoSprite);
 
     animationLoop();
 
@@ -147,7 +150,7 @@ const JSON = { layout:
             type: 10010103,
             rm: false,
             hw: false },
-          { pos: { x: 320, y: 285 },
+          { pos: { x: 320, y: 290 },
             idx: { x: 3, y: 3 },
             oid: '0033',
             type: 10010103,
