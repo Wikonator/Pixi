@@ -28,10 +28,11 @@ function setup() {
 	
 	var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
 	var exoId = loader.resources["exoWalkJson"].textures;
-	var spriteTexture = loader.resources["sprite"].texture;
+	var spritetexture = loader.resources["sprite"].texture;
         arrayFromAtlas = [];
 	
-	spriteTexture.frame = rect;
+	spritetexture.frame = rect;
+	//secondtexture.frame = new PIXI.Rectangle( 0, 0, 340, 175 );
 
 	for(x in exoId) {
         arrayFromAtlas.push(PIXI.Texture.fromFrame(x));
@@ -42,13 +43,12 @@ function setup() {
 	exoSprite.animationSpeed = 0.5;
 	exoSprite.scale.set(0.4, 0.4);
 	exoSprite.x = 400;
-    exoSprite.y = 330;
+    exoSprite.y = 305;
     exoSprite.play();
-	
 	//sprite.scale.set(0.5, 0.50);
 	var arrayOfSprites = [];
 	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
-	  arrayOfSprites[i] = new PIXI.Sprite(spriteTexture);
+	  arrayOfSprites[i] = new PIXI.Sprite(spritetexture);
 	  arrayOfSprites[i].scale.set(0.5, 0.5);
 	  arrayOfSprites[i].anchor.x = 0.5;
 	  arrayOfSprites[i].anchor.y = 0.5;
@@ -60,7 +60,7 @@ function setup() {
 	var rectangleType = myJSON.layout[0].type;
 	var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
 	var arrayOfGrass = [];
-	var groundtexture = new PIXI.Texture(spriteTexture.baseTexture, groundRect);
+	var groundtexture = new PIXI.Texture(spritetexture.baseTexture, groundRect);
 	//groundtexture.frame = groundRect;
 	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
 	  arrayOfGrass[i] = new PIXI.Sprite(groundtexture);
@@ -83,13 +83,28 @@ function setup() {
 
     stage.addChild(exoSprite);
 
+    function animationLoop() {
+
+        requestAnimationFrame(animationLoop);
+
+        function exoMover() {
+            if (exoSprite.x <= 125 || exoSprite.y <= 90) {
+                exoSprite.x = 400;
+                exoSprite.y = 305;
+            } else {
+                exoSprite.x -= 0.2;
+                exoSprite.y -= 0.1;
+            }
+        }
+
+        exoMover();
+        renderer.render(stage);
+    }
+
     animationLoop();
 }
 
-function animationLoop() {
-  requestAnimationFrame(animationLoop);
-    renderer.render(stage);
-}
+
 
 const types = {
     2: {baseX: 525, baseY: 1104}
