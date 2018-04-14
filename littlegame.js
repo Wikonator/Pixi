@@ -1,5 +1,5 @@
 ﻿PIXI.utils.sayHello();
-const socket = io.connect('http://89.173.200.63:8070');
+//const socket = io.connect('http://89.173.200.63:8070');
 
 var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom je canvas
   transparent: true,
@@ -10,81 +10,80 @@ document.getElementById('display').appendChild(renderer.view);
 
 var stage = new PIXI.Container();
 var loader = new PIXI.loaders.Loader();
-    //secondLoader = new PIXI.loaders.Loader(),
-  //thirdLoader = new PIXI.loaders.Loader();
 
 loader.add('sprite', 'images/Sheet1.png')
-  .add('exoWalkSheet', 'images/ExoWalkTex.png')
   .add('exoWalkJson', 'images/ExoWalkTex.json')
   .load(setup);
 
-
 var data = {user: "name"};
-socket.emit('onLoad', data);
-socket.on('onRefresh', function(data){
-	console.log(data);
-});
 
-function thisJustFired() {
-    socket.emit('onLoad',
-    console.log("thisJustFired")
-    );
-}
+//socket.emit('onLoad', data);
+//socket.on('onRefresh', function(data){
+	//console.log(data);
+//});
+
 function setup() {
     stage.interactive = true;
-    console.log("habbening");
-        var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
+    console.log('habbening');
+	
+	var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
+	var exoId = loader.resources["exoWalkJson"].textures;
+	var spriteTexture = loader.resources["sprite"].texture;
+        arrayFromAtlas = [];
+	
+	spriteTexture.frame = rect;
 
-        var exoId = loader.resources["exoWalkJson"].textures;
-        var texture = loader.resources["sprite"].texture;
-        var secondTexture = loader.resources["exoWalkSheet"].texture;
-        texture.frame = rect;
-        secondTexture.frame = new PIXI.Rectangle( 0, 0, 340, 175 );
-        console.log(loader.resources);
+	for(x in exoId) {
+        arrayFromAtlas.push(PIXI.Texture.fromFrame(x));
+    }
 
-        var exoSprite = new PIXI.Sprite( exoId["1_00000.png"]);
-        console.log(exoId);
+	var exoSprite = new PIXI.extras.AnimatedSprite(arrayFromAtlas);
+	exoSprite.anchor.set(0.4);
+	exoSprite.animationSpeed = 0.5;
+	exoSprite.scale.set(0.4, 0.4);
+	exoSprite.x = 400;
+    exoSprite.y = 330;
+    exoSprite.play();
+	
+	//sprite.scale.set(0.5, 0.50);
+	var arrayOfSprites = [];
+	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
+	  arrayOfSprites[i] = new PIXI.Sprite(spriteTexture);
+	  arrayOfSprites[i].scale.set(0.5, 0.5);
+	  arrayOfSprites[i].anchor.x = 0.5;
+	  arrayOfSprites[i].anchor.y = 0.5;
+	  arrayOfSprites[i].x = myJSON.layout[0].square[i].pos.x;
+	  arrayOfSprites[i].y = myJSON.layout[0].square[i].pos.y;
+	  stage.addChild(arrayOfSprites[i])
+	}
 
-        //sprite.scale.set(0.5, 0.50);
-        var arrayOfSprites = [];
-        for (var i = 0; i < JSON.layout[0].square.length; i++) {
-          arrayOfSprites[i] = new PIXI.Sprite(texture);
-          arrayOfSprites[i].scale.set(0.5, 0.5);
-          arrayOfSprites[i].anchor.x = 0.5;
-          arrayOfSprites[i].anchor.y = 0.5;
-          arrayOfSprites[i].x = JSON.layout[0].square[i].pos.x;
-          arrayOfSprites[i].y = JSON.layout[0].square[i].pos.y;
-          stage.addChild(arrayOfSprites[i])
-        }
+	var rectangleType = myJSON.layout[0].type;
+	var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
+	var arrayOfGrass = [];
+	var groundtexture = new PIXI.Texture(spriteTexture.baseTexture, groundRect);
+	//groundtexture.frame = groundRect;
+	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
+	  arrayOfGrass[i] = new PIXI.Sprite(groundtexture);
+	  //arrayOfSprites[i].scale.set(0.5, 0.5);
+	  arrayOfGrass[i].anchor.x = 0.5;
+	  arrayOfGrass[i].anchor.y = 0.5;
+	  arrayOfGrass[i].x = myJSON.layout[0].square[i].pos.x;
+	  arrayOfGrass[i].y = myJSON.layout[0].square[i].pos.y;
+	  arrayOfGrass[i].interactive = true;
+	  arrayOfGrass[i].clickCounter = 0;
+	  arrayOfGrass[i].click = function() {
+		if (this.clickCounter >= 3) {
+		  this.clickCounter = 0;
+		  this.visible = false;
+		}
+		this.clickCounter += 1;
+	  };
+	  stage.addChild(arrayOfGrass[i]);
+	}
 
-        var rectangleType = JSON.layout[0].type;
-        var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
-        var arrayOfGrass = [];
-        var GroundTexture = new PIXI.Texture(texture.baseTexture, groundRect);
-        //GroundTexture.frame = groundRect;
-        for (var i = 0; i < JSON.layout[0].square.length; i++) {
-          arrayOfGrass[i] = new PIXI.Sprite(GroundTexture);
-          //arrayOfSprites[i].scale.set(0.5, 0.5);
-          arrayOfGrass[i].anchor.x = 0.5;
-          arrayOfGrass[i].anchor.y = 0.5;
-          arrayOfGrass[i].x = JSON.layout[0].square[i].pos.x;
-          arrayOfGrass[i].y = JSON.layout[0].square[i].pos.y;
-          arrayOfGrass[i].interactive = true;
-          arrayOfGrass[i].clickCounter = 0;
-          arrayOfGrass[i].click = function() {
-            if (this.clickCounter >= 3) {
-              this.clickCounter = 0;
-              this.visible = false;
-            }
-            this.clickCounter += 1;
-          };
-          stage.addChild(arrayOfGrass[i]);
-        }
-
-        stage.addChild(exoSprite);
+    stage.addChild(exoSprite);
 
     animationLoop();
-
 }
 
 function animationLoop() {
@@ -96,7 +95,7 @@ const types = {
     2: {baseX: 525, baseY: 1104}
 };
 
-const JSON = { layout:
+const myJSON = { layout:
    [ { idx: { x: 0, y: 0 },
        pos: { x: 15, y: 240 },
        type: 2,
