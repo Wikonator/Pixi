@@ -12,31 +12,54 @@ var stage = new PIXI.Container();
 var loader = new PIXI.loaders.Loader();
 
 loader.add('sprite', 'images/Sheet1.png')
-  .add('exoWalkJson', 'images/ExoWalkTex.json')
+  .add('exoStep1', 'images/ExoStep1/ExoStep1.json')
+    .add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json')
+    .add('exoStep2', 'images/ExoStep2/ExoStep2.json')
+    .add('exoTurnLeft', 'images/ExoSpin23/ExoSpin23.json')
   .load(setup);
 
-var data = {user: "name"};
-
-//socket.emit('onLoad', data);
-//socket.on('onRefresh', function(data){
-	//console.log(data);
-//});
+//var data = {user: "name"};
+//
+// socket.onopen = function() {
+//     alert("socket has opened");
+// };
+// socket.emit('onLoad', data);
+// socket.on('onRefresh', function(data){
+// 	console.log(data);
+// });
 
 function setup() {
     stage.interactive = true;
-    console.log('habbening');
 	
 	var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
-	var exoId = loader.resources["exoWalkJson"].textures;
-	var spritetexture = loader.resources["sprite"].texture;
-        arrayFromAtlas = [];
-	
-	spritetexture.frame = rect;
-	//secondtexture.frame = new PIXI.Rectangle( 0, 0, 340, 175 );
+	var spriteTexture = loader.resources["sprite"].texture;
+	var loaderTextures = {
+        exoStep1 : loader.resources["exoStep1"].textures,
+        exoTurnRight : loader.resources["exoTurnRight"].textures,
+        exoStep2 : loader.resources["exoStep2"].textures,
+        exoTurnLeft : loader.resources["exoTurnLeft"].textures,
+    };
+	var texturesObject =
+     {
+        exoStep1 : [],
+        exoTurnRight : [],
+        exoStep2 : [],
+        exoTurnLeft : []
+    };
 
-	for(x in exoId) {
-        arrayFromAtlas.push(PIXI.Texture.fromFrame(x));
-    }
+    spriteTexture.frame = rect;
+    for (var i in loaderTextures) {
+       // console.log(i);
+        if (texturesObject.hasOwnProperty(i)) {
+            console.log("first once")
+            for(var x = 0; x>=loaderTextures[i].length; x++) {
+                console.log(loaderTextures[i][x]);
+                texturesObject[i].push(PIXI.Texture.fromFrame(loaderTextures[i][x]));
+            }
+        }
+    };
+
+	console.log(texturesObject);
 
 	var exoSprite = new PIXI.extras.AnimatedSprite(arrayFromAtlas);
 	exoSprite.anchor.set(0.4);
@@ -46,6 +69,7 @@ function setup() {
     exoSprite.y = 305;
     exoSprite.play();
 	//sprite.scale.set(0.5, 0.50);
+
 	var arrayOfSprites = [];
 	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
 	  arrayOfSprites[i] = new PIXI.Sprite(spritetexture);
