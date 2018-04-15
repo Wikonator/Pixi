@@ -11,12 +11,12 @@ document.getElementById('display').appendChild(renderer.view);
 var stage = new PIXI.Container();
 var loader = new PIXI.loaders.Loader();
 
-loader.add('sprite', 'images/Sheet1.png')
-  .add('exoStep1', 'images/ExoStep1/ExoStep1.json')
-    .add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json')
-    .add('exoStep2', 'images/ExoStep2/ExoStep2.json')
-    .add('exoTurnLeft', 'images/ExoSpin23/ExoSpin23.json')
-  .load(setup);
+loader.add('sprite', 'images/Sheet1.png');
+loader.add('exoStep1', 'images/ExoStep1/ExoStep1.json');
+loader.add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json');
+loader.add('exoStep2', 'images/ExoStep2/ExoStep2.json');
+loader.add('exoTurnLeft', 'images/ExoSpin23/ExoSpin23.json');
+loader.load(setup);
 
 //var data = {user: "name"};
 //
@@ -49,19 +49,21 @@ function setup() {
 
     spriteTexture.frame = rect;
     for (var i in loaderTextures) {
-       // console.log(i);
         if (texturesObject.hasOwnProperty(i)) {
-            console.log("first once")
-            for(var x = 0; x>=loaderTextures[i].length; x++) {
-                console.log(loaderTextures[i][x]);
-                texturesObject[i].push(PIXI.Texture.fromFrame(loaderTextures[i][x]));
-            }
+
+			var count = 0;
+			for(var key in loaderTextures[i])
+				if(loaderTextures[i].hasOwnProperty(key))
+					count++;
+			for(var key in loaderTextures[i]) {
+				if(loaderTextures[i].hasOwnProperty(key)) {
+					texturesObject[i].push(loaderTextures[i][key]);
+				}
+			}
         }
     };
 
-	console.log(texturesObject);
-
-	var exoSprite = new PIXI.extras.AnimatedSprite(arrayFromAtlas);
+	var exoSprite = new PIXI.extras.AnimatedSprite(texturesObject.exoStep1);
 	exoSprite.anchor.set(0.4);
 	exoSprite.animationSpeed = 0.5;
 	exoSprite.scale.set(0.4, 0.4);
@@ -72,7 +74,7 @@ function setup() {
 
 	var arrayOfSprites = [];
 	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
-	  arrayOfSprites[i] = new PIXI.Sprite(spritetexture);
+	  arrayOfSprites[i] = new PIXI.Sprite(spriteTexture);
 	  arrayOfSprites[i].scale.set(0.5, 0.5);
 	  arrayOfSprites[i].anchor.x = 0.5;
 	  arrayOfSprites[i].anchor.y = 0.5;
@@ -84,7 +86,7 @@ function setup() {
 	var rectangleType = myJSON.layout[0].type;
 	var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
 	var arrayOfGrass = [];
-	var groundtexture = new PIXI.Texture(spritetexture.baseTexture, groundRect);
+	var groundtexture = new PIXI.Texture(spriteTexture.baseTexture, groundRect);
 	//groundtexture.frame = groundRect;
 	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
 	  arrayOfGrass[i] = new PIXI.Sprite(groundtexture);
