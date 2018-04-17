@@ -25,17 +25,21 @@ loader.add('sprite', 'images/Sheet1.png')      //load all the sprite sheet asset
     .add('exoCuttingClose1', 'images/ExoCuttingClose1/ExoCuttingClose1.json')
     .add('exoCuttingClose3', 'images/ExoCuttingClose3/ExoCuttingClose3.json')
     .add('exoCuttingFar1', 'images/ExoCuttingFar1/ExoCuttingFar1.json')
-    .add('exoCuttingFar3', 'images/ExoCuttingFar3/ExoCuttingFar3.json')
-    .load(setup);
+    .add('exoCuttingFar3', 'images/ExoCuttingFar3/ExoCuttingFar3.json');
 
 var jsonData = {};
-var data = {user: "someGuy"};
+var sendData = {user: "someGuy"};
 
+function refresh() {
+    console.log("YOLO");
+    loader.load(setup);
+}
 
-socket.emit('onLoad', data);
+socket.emit('onLoad', sendData);
 socket.on('onRefresh', function(data){
     jsonData = data;
 	console.log( data);
+	refresh();
 });
 
 function setup() {
@@ -107,28 +111,28 @@ function setup() {
 	//sprite.scale.set(0.5, 0.50);
 
 	var arrayOfSprites = [];
-	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
+	for (var i = 0; i < jsonData.layout[0].square.length; i++) {
 	  arrayOfSprites[i] = new PIXI.Sprite(spriteTexture);
 	  arrayOfSprites[i].scale.set(0.5, 0.5);
 	  arrayOfSprites[i].anchor.x = 0.5;
 	  arrayOfSprites[i].anchor.y = 0.5;
-	  arrayOfSprites[i].x = myJSON.layout[0].square[i].pos.x;
-	  arrayOfSprites[i].y = myJSON.layout[0].square[i].pos.y;
+	  arrayOfSprites[i].x = jsonData.layout[0].square[i].pos.x;
+	  arrayOfSprites[i].y = jsonData.layout[0].square[i].pos.y;
 	  ground.addChild(arrayOfSprites[i])
 	}
 
-	var rectangleType = myJSON.layout[0].type;
+	var rectangleType = jsonData.layout[0].type;
 	var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
 	var arrayOfGrass = [];
 	var groundtexture = new PIXI.Texture(spriteTexture.baseTexture, groundRect);
 	//groundtexture.frame = groundRect;
-	for (var i = 0; i < myJSON.layout[0].square.length; i++) {
+	for (var i = 0; i < jsonData.layout[0].square.length; i++) {
 	  arrayOfGrass[i] = new PIXI.Sprite(groundtexture);
 	  //arrayOfSprites[i].scale.set(0.5, 0.5);
 	  arrayOfGrass[i].anchor.x = 0.5;
 	  arrayOfGrass[i].anchor.y = 0.5;
-	  arrayOfGrass[i].x = myJSON.layout[0].square[i].pos.x;
-	  arrayOfGrass[i].y = myJSON.layout[0].square[i].pos.y;
+	  arrayOfGrass[i].x = jsonData.layout[0].square[i].pos.x;
+	  arrayOfGrass[i].y = jsonData.layout[0].square[i].pos.y;
 	  arrayOfGrass[i].interactive = true;
 	  arrayOfGrass[i].clickCounter = 0;
 	  arrayOfGrass[i].click = function() {
@@ -147,19 +151,16 @@ function setup() {
 
         requestAnimationFrame(animationLoop);
 
-            // if (exoSprite.x >= 320) {
-            //     exoSprite.action = "turnRight";
-            //      exoMover(exoSprite);
-            // } else {
-            //      exoSprite.x += exoSprite.vx;
-            //      exoSprite.y += exoSprite.vy;
-            //  }
+        // if (exoSprite.x >= 320) {
+        //     exoSprite.action = "turnRight";
+        //      exoMover(exoSprite);
+        // } else {
+        //      exoSprite.x += exoSprite.vx;
+        //      exoSprite.y += exoSprite.vy;
+        //  }
 
 
         renderer.render(stage);
-    }
-    function triggerDetector() {
-
     }
 
     function exoMover(exoSprite) { //check the exoSprite action parameter,
@@ -198,73 +199,70 @@ function setup() {
     animationLoop();
 }
 
-
-
-
 const types = {
     2: {baseX: 525, baseY: 1104}
 };
 
-const myJSON = { layout:
-   [ { idx: { x: 0, y: 0 },
-       pos: { x: 15, y: 240 },
-       type: 2,
-       oid: '00',
-       square:
-        [ { pos: { x: 325, y: 130 },
-            idx: { x: 1, y: 1 },
-            oid: '0011',
-            type: 10010103,
-            rm: false,
-            hw: true },
-          { pos: { x: 250, y: 170 },
-            idx: { x: 1, y: 2 },
-            oid: '0012',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 175, y: 210 },
-            idx: { x: 1, y: 3 },
-            oid: '0013',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 400, y: 170 },
-            idx: { x: 2, y: 1 },
-            oid: '0021',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 325, y: 210 },
-            idx: { x: 2, y: 2 },
-            oid: '0022',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 250, y: 250 },
-            idx: { x: 2, y: 3 },
-            oid: '0023',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 475, y: 210 },
-            idx: { x: 3, y: 1 },
-            oid: '0031',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 400, y: 250 },
-            idx: { x: 3, y: 2 },
-            oid: '0032',
-            type: 10010103,
-            rm: false,
-            hw: false },
-          { pos: { x: 320, y: 290 },
-            idx: { x: 3, y: 3 },
-            oid: '0033',
-            type: 10010103,
-            rm: false,
-            hw: false } ] } ] }
+// const jsonData = { layout:
+//    [ { idx: { x: 0, y: 0 },
+//        pos: { x: 15, y: 240 },
+//        type: 2,
+//        oid: '00',
+//        square:
+//         [ { pos: { x: 325, y: 130 },
+//             idx: { x: 1, y: 1 },
+//             oid: '0011',
+//             type: 10010103,
+//             rm: false,
+//             hw: true },
+//           { pos: { x: 250, y: 170 },
+//             idx: { x: 1, y: 2 },
+//             oid: '0012',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 175, y: 210 },
+//             idx: { x: 1, y: 3 },
+//             oid: '0013',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 400, y: 170 },
+//             idx: { x: 2, y: 1 },
+//             oid: '0021',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 325, y: 210 },
+//             idx: { x: 2, y: 2 },
+//             oid: '0022',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 250, y: 250 },
+//             idx: { x: 2, y: 3 },
+//             oid: '0023',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 475, y: 210 },
+//             idx: { x: 3, y: 1 },
+//             oid: '0031',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 400, y: 250 },
+//             idx: { x: 3, y: 2 },
+//             oid: '0032',
+//             type: 10010103,
+//             rm: false,
+//             hw: false },
+//           { pos: { x: 320, y: 290 },
+//             idx: { x: 3, y: 3 },
+//             oid: '0033',
+//             type: 10010103,
+//             rm: false,
+//             hw: false } ] } ] }
 
             // ⠰⡿⠿⠛⠛⠻⠿⣷
             // ⠀⠀⠀⠀⠀⠀⣀⣄⡀⠀⠀⠀⠀⢀⣀⣀⣤⣄⣀⡀
