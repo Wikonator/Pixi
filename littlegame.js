@@ -29,21 +29,26 @@ loader.add('sprite', 'images/Sheet1.png')      //load all the sprite sheet asset
 
 var jsonData = {};
 var sendData = {user: "someGuy"},
+    animationQueue = [],
     refreshTracker = false;
 
 function refresh() {
     loader.load(setup);
 }
 
+function animationChanger() {
+
+    animationQueue.push[jsonData.layout[0].scenar[0].action];
+}
+
 socket.emit('onLoad', sendData);
 socket.on('onRefresh', function(data){
-	console.log(refreshTracker);
-	if (refreshTracker == true) {
-    console.log("nope");
+	if (refreshTracker === true) {  // check if an onRefresh already happened
+        animationChanger();    // do something
     } else {
-	    refreshTracker = true;
-        jsonData = data;
-	    refresh();
+	    refreshTracker = true; // set tracker to true
+        jsonData = data;        // write data to the script object
+	    refresh();              // load the textures
     }
 });
 
@@ -86,14 +91,13 @@ function setup() {
     spriteTexture.frame = rect;
     for (var i in loaderTextures) {
         if (texturesObject.hasOwnProperty(i)) {
-
 			var count = 0;
 			for(var key in loaderTextures[i])
 				if(loaderTextures[i].hasOwnProperty(key))
 					count++;
 			for(var key in loaderTextures[i]) {
 				if(loaderTextures[i].hasOwnProperty(key)) {
-					texturesObject[i].push(loaderTextures[i][key]);
+					texturesObject[i].push(loaderTextures[i][key]);         // create a textures object, whose arrays hold the textures for each animation
 				}
 			}
         }
@@ -155,7 +159,6 @@ function setup() {
     function animationLoop() {
 
         requestAnimationFrame(animationLoop);
-        animationChanger();
         // if (exoSprite.x >= 320) {
         //     exoSprite.action = "turnRight";
         //      exoMover(exoSprite);
@@ -168,9 +171,6 @@ function setup() {
         renderer.render(stage);
     }
 
-    function animationChanger() {
-
-    }
 
     function exoMover(exoSprite) { //check the exoSprite action parameter,
         // if nothing, do idle,
