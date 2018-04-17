@@ -28,18 +28,23 @@ loader.add('sprite', 'images/Sheet1.png')      //load all the sprite sheet asset
     .add('exoCuttingFar3', 'images/ExoCuttingFar3/ExoCuttingFar3.json');
 
 var jsonData = {};
-var sendData = {user: "someGuy"};
+var sendData = {user: "someGuy"},
+    refreshTracker = false;
 
 function refresh() {
-    console.log("YOLO");
     loader.load(setup);
 }
 
 socket.emit('onLoad', sendData);
 socket.on('onRefresh', function(data){
-    jsonData = data;
-	console.log( data);
-	refresh();
+	console.log(refreshTracker);
+	if (refreshTracker == true) {
+    console.log("nope");
+    } else {
+	    refreshTracker = true;
+        jsonData = data;
+	    refresh();
+    }
 });
 
 function setup() {
@@ -150,7 +155,7 @@ function setup() {
     function animationLoop() {
 
         requestAnimationFrame(animationLoop);
-
+        animationChanger();
         // if (exoSprite.x >= 320) {
         //     exoSprite.action = "turnRight";
         //      exoMover(exoSprite);
@@ -161,6 +166,10 @@ function setup() {
 
 
         renderer.render(stage);
+    }
+
+    function animationChanger() {
+
     }
 
     function exoMover(exoSprite) { //check the exoSprite action parameter,
