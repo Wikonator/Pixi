@@ -1,5 +1,4 @@
-﻿PIXI.utils.sayHello();
-//const socket = io.connect('http://89.173.200.63:8070');
+﻿const socket = io.connect('http://89.173.200.63:8050');
 
 var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom je canvas
   transparent: true,
@@ -8,25 +7,36 @@ var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom 
 
 document.getElementById('display').appendChild(renderer.view);
 
-var stage = new PIXI.Container();
+var stage = new PIXI.Container(),
+    ground = new PIXI.Container();
+stage.addChild(ground);
+
 var loader = new PIXI.loaders.Loader();
 
-loader.add('sprite', 'images/Sheet1.png');
-loader.add('exoStep1', 'images/ExoStep1/ExoStep1.json');
-loader.add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json');
-loader.add('exoStep2', 'images/ExoStep2/ExoStep2.json');
-loader.add('exoTurnLeft', 'images/ExoSpin23/ExoSpin23.json');
-loader.load(setup);
+loader.add('sprite', 'images/Sheet1.png')      //load all the sprite sheet assets
+    .add('exoStep1', 'images/ExoStep1/ExoStep1.json')
+    .add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json')
+    .add('exoStep2', 'images/ExoStep2/ExoStep2.json')
+    .add('exoTurnLeft', 'images/ExoSpin23/ExoSpin23.json')
+    .add('exoCutIdleClose1', 'images/ExoCutIdleClose1/ExoCutIdleClose1.json')
+    .add('exoCutIdleClose3', 'images/ExoCutIdleClose3/ExoCutIdleClose3.json')
+    .add('exoCutIdleFar1', 'images/ExoCutIdleFar1/ExoCutIdleFar1.json')
+    .add('exoCutIdleFar3', 'images/ExoCutIdleFar3/ExoCutIdleFar3.json')
+    .add('exoCuttingClose1', 'images/ExoCuttingClose1/ExoCuttingClose1.json')
+    .add('exoCuttingClose3', 'images/ExoCuttingClose3/ExoCuttingClose3.json')
+    .add('exoCuttingFar1', 'images/ExoCuttingFar1/ExoCuttingFar1.json')
+    .add('exoCuttingFar3', 'images/ExoCuttingFar3/ExoCuttingFar3.json')
+    .load(setup);
 
-//var data = {user: "name"};
-//
-// socket.onopen = function() {
-//     alert("socket has opened");
-// };
-// socket.emit('onLoad', data);
-// socket.on('onRefresh', function(data){
-// 	console.log(data);
-// });
+var jsonData = {};
+var data = {user: "someGuy"};
+
+
+socket.emit('onLoad', data);
+socket.on('onRefresh', function(data){
+    jsonData = data;
+	console.log( data);
+});
 
 function setup() {
     stage.interactive = true;
@@ -38,13 +48,30 @@ function setup() {
         exoTurnRight : loader.resources["exoTurnRight"].textures,
         exoStep2 : loader.resources["exoStep2"].textures,
         exoTurnLeft : loader.resources["exoTurnLeft"].textures,
+        exoCutIdleClose1: loader.resources["exoCutIdleClose1"].textures,
+        exoCutIdleClose3: loader.resources["exoCutIdleClose3"].textures,
+        exoCutIdleFar1: loader.resources["exoCutIdleFar1"].textures,
+        exoCutIdleFar3: loader.resources["exoCutIdleFar3"].textures,
+        exoCuttingClose1: loader.resources["exoCuttingClose1"].textures,
+        exoCuttingClose3: loader.resources["exoCuttingClose3"].textures,
+        exoCuttingFar1: loader.resources["exoCuttingFar1"].textures,
+        exoCuttingFar3: loader.resources["exoCuttingFar3"].textures
     };
 	var texturesObject =
      {
-        exoStep1 : [],
-        exoTurnRight : [],
-        exoStep2 : [],
-        exoTurnLeft : []
+         idle: [],
+         exoStep1 : [],
+         exoTurnRight : [],
+         exoStep2 : [],
+         exoTurnLeft : [],
+         exoCutIdleClose1 : [],
+         exoCutIdleClose3 : [],
+         exoCutIdleFar1 : [],
+         exoCutIdleFar3 : [],
+         exoCuttingClose1 : [],
+         exoCuttingClose3 : [],
+         exoCuttingFar1 : [],
+         exoCuttingFar3 : [],
     };
 
     spriteTexture.frame = rect;
@@ -64,11 +91,18 @@ function setup() {
     };
 
 	var exoSprite = new PIXI.extras.AnimatedSprite(texturesObject.exoStep1);
+	var exoTurnRightReverse = texturesObject.exoTurnRight.slice().reverse();
+	//exoSprite.textures = exoTurnRightReverse;
+
+    // console.log("textures Object:" + texturesObject);
+
 	exoSprite.anchor.set(0.4);
 	exoSprite.animationSpeed = 0.5;
 	exoSprite.scale.set(0.4, 0.4);
 	exoSprite.x = 400;
     exoSprite.y = 305;
+    exoSprite.action = "walk1";
+
     exoSprite.play();
 	//sprite.scale.set(0.5, 0.50);
 
@@ -80,7 +114,7 @@ function setup() {
 	  arrayOfSprites[i].anchor.y = 0.5;
 	  arrayOfSprites[i].x = myJSON.layout[0].square[i].pos.x;
 	  arrayOfSprites[i].y = myJSON.layout[0].square[i].pos.y;
-	  stage.addChild(arrayOfSprites[i])
+	  ground.addChild(arrayOfSprites[i])
 	}
 
 	var rectangleType = myJSON.layout[0].type;
@@ -104,31 +138,66 @@ function setup() {
 		}
 		this.clickCounter += 1;
 	  };
-	  stage.addChild(arrayOfGrass[i]);
+	  ground.addChild(arrayOfGrass[i]);
 	}
-
     stage.addChild(exoSprite);
+
 
     function animationLoop() {
 
         requestAnimationFrame(animationLoop);
 
-        function exoMover() {
-            if (exoSprite.x <= 125 || exoSprite.y <= 90) {
-                exoSprite.x = 400;
-                exoSprite.y = 305;
-            } else {
-                exoSprite.x -= 0.2;
-                exoSprite.y -= 0.1;
-            }
-        }
+            // if (exoSprite.x >= 320) {
+            //     exoSprite.action = "turnRight";
+            //      exoMover(exoSprite);
+            // } else {
+            //      exoSprite.x += exoSprite.vx;
+            //      exoSprite.y += exoSprite.vy;
+            //  }
 
-        exoMover();
+
         renderer.render(stage);
+    }
+    function triggerDetector() {
+
+    }
+
+    function exoMover(exoSprite) { //check the exoSprite action parameter,
+        // if nothing, do idle,
+        // if walk1 turn exoSprite texture to exoStep1, start velocity for move1,
+        // if
+        switch (exoSprite.action) {
+            case "walk1":
+                exoSprite.textures = texturesObject.exoStep1;
+                exoSprite.vx = -0.2;
+                exoSprite.vy = -0.1;
+                break;
+            case "walk2" :
+                exoSprite.textures = texturesObject.exoStep2;
+                exoSprite.vx = 0.2;
+                exoSprite.vy = -0.1;
+                break;
+            case "turnRight" :
+                exoSprite.textures = exoTurnRightReverse;
+                exoSprite.vx = 0;
+                exoSprite.vy = 0;
+                break;
+            case "turnLeft" :
+                exoSprite.textures = texturesObject.exoTurnLeft;
+                exoSprite.vx = 0;
+                exoSprite.vy = 0;
+                break;
+            default:
+                exoSprite.textures = texturesObject.idle;
+                exoSprite.vx = 0;
+                exoSprite.vy = 0;
+                break;
+        }
     }
 
     animationLoop();
 }
+
 
 
 
