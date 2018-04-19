@@ -8,7 +8,7 @@ var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom 
 document.getElementById('display').appendChild(renderer.view);
 
 var stage = new PIXI.Container(),
-    ground = new PIXI.Container();
+ground = new PIXI.Container();
 stage.addChild(ground);
 
 var loader = new PIXI.loaders.Loader();
@@ -30,30 +30,36 @@ loader.add('sprite', 'images/Sheet1.png')      //load all the sprite sheet asset
 var jsonData = {};
 var sendData = {user: "someGuy"},
     animationQueue = [],
+    exoSprite = {},
     refreshTracker = false;
 
 function refresh() {
     loader.load(setup);
+    console.log("refresh fired")
 }
 
-function animationChanger() {
-
+function animationChanger(exoSprite) {
+    exoSprite.xv = -0.2;
+    exoSprite.yv = -0.1;
     animationQueue.push[jsonData.layout[0].scenar[0].action];
 }
 
 socket.emit('onLoad', sendData);
 socket.on('onRefresh', function(data){
 	if (refreshTracker === true) {  // check if an onRefresh already happened
-        animationChanger();    // do something
+        animationChanger(exoSprite);    // do something
+        console.log("onRefresh if1 fired")
     } else {
 	    refreshTracker = true; // set tracker to true
         jsonData = data;        // write data to the script object
 	    refresh();              // load the textures
+        console.log("onRefresh else1 fired")
     }
 });
 
 function setup() {
     stage.interactive = true;
+    console.log("setup just fired")
 	
 	var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
 	var spriteTexture = loader.resources["sprite"].texture;
@@ -103,15 +109,17 @@ function setup() {
         }
     };
 
-	var exoSprite = new PIXI.extras.AnimatedSprite(texturesObject.exoStep1);
-	var exoTurnRightReverse = texturesObject.exoTurnRight.slice().reverse();
-	//exoSprite.textures = exoTurnRightReverse;
-
-    // console.log("textures Object:" + texturesObject);
-
+	exoSprite = new PIXI.extras.AnimatedSprite(texturesObject.exoStep1);
 	exoSprite.anchor.set(0.4);
+	exoSprite.move = function () {
+
+	    exoSprite.x += exoSprite.xv;
+	    exoSprite.y += exoSprite.yv;
+    }
 	exoSprite.animationSpeed = 0.5;
 	exoSprite.scale.set(0.4, 0.4);
+	exoSprite.xv = 0;
+	exoSprite.yv = 0;
 	exoSprite.x = 400;
     exoSprite.y = 305;
     exoSprite.action = "walk1";
@@ -153,46 +161,49 @@ function setup() {
 	  };
 	  ground.addChild(arrayOfGrass[i]);
 	}
+
+    //exoMover(exoSprite);
     stage.addChild(exoSprite);
+	console.log("addchild(exoSprite) fired");
+    //console.log(exoSprite);
 
 
     function animationLoop() {
 
+       //exoSprite.x += -0.2;
+       // exoSprite.y += -0.1;
+        exoSprite.move();
         requestAnimationFrame(animationLoop);
-        // if (exoSprite.x >= 320) {
-        //     exoSprite.action = "turnRight";
-        //      exoMover(exoSprite);
-        // } else {
-        //      exoSprite.x += exoSprite.vx;
-        //      exoSprite.y += exoSprite.vy;
-        //  }
 
 
         renderer.render(stage);
     }
 
 
+
     function exoMover(exoSprite) { //check the exoSprite action parameter,
         // if nothing, do idle,
         // if walk1 turn exoSprite texture to exoStep1, start velocity for move1,
         // if
-        switch (exoSprite.action) {
-            case "walk1":
-                exoSprite.textures = texturesObject.exoStep1;
-                exoSprite.vx = -0.2;
-                exoSprite.vy = -0.1;
+        switch (jsonData.layout[0].scenar[0].action) {
+            case 0:
+                let reverseRight = texturesObject.exoTurnRight.slice().reverse();
+                exoSprite.textures = reverseRight;
+                //exoSprite.textures = texturesObject.exoStep1;
+                exoSprite.vx = 0.2;
+                exoSprite.vy = 0.1;
                 break;
-            case "walk2" :
+            case 1 :
                 exoSprite.textures = texturesObject.exoStep2;
                 exoSprite.vx = 0.2;
                 exoSprite.vy = -0.1;
                 break;
-            case "turnRight" :
+            case 2 :
                 exoSprite.textures = exoTurnRightReverse;
                 exoSprite.vx = 0;
                 exoSprite.vy = 0;
                 break;
-            case "turnLeft" :
+            case 3 :
                 exoSprite.textures = texturesObject.exoTurnLeft;
                 exoSprite.vx = 0;
                 exoSprite.vy = 0;
