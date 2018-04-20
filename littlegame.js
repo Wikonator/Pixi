@@ -15,8 +15,10 @@ var loader = new PIXI.loaders.Loader();
 
 loader.add('sprite', 'images/Sheet1.png')      //load all the sprite sheet assets
     .add('exoStep1', 'images/ExoStep1/ExoStep1.json')
-    .add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json')
     .add('exoStep2', 'images/ExoStep2/ExoStep2.json')
+    .add('exoStep3', 'images/ExoStep3/ExoStep3.json')
+    .add('exoStep4', 'images/ExoStep4/ExoStep4.json')
+    .add('exoTurnRight', 'images/ExoSpin12/ExoSpin12.json')
     .add('exoTurnLeft', 'images/ExoSpin23/ExoSpin23.json')
     .add('exoCutIdleClose1', 'images/ExoCutIdleClose1/ExoCutIdleClose1.json')
     .add('exoCutIdleClose3', 'images/ExoCutIdleClose3/ExoCutIdleClose3.json')
@@ -31,42 +33,125 @@ var jsonData = {};
 var sendData = {user: "someGuy"},
     animationQueue = [],
     exoSprite = {},
+    texturesObject = {},
     refreshTracker = false;
 
 function refresh() {
     loader.load(setup);
-    console.log("refresh fired")
 }
 
 function animationChanger(exoSprite) {
-    exoSprite.xv = -0.2;
-    exoSprite.yv = -0.1;
-    animationQueue.push[jsonData.layout[0].scenar[0].action];
+
+    exoMover(exoSprite);
+    exoSprite.play();
+    animationQueue.push(jsonData.layout[0].scenar[0]);
+    console.log(animationQueue);
+}
+
+function exoMover(exoSprite) { // chooses which animation to play, based on script
+    // if nothing, do idle,
+    // if walk1 turn exoSprite texture to exoStep1
+    switch (jsonData.layout[0].scenar[0].action) {
+        case 5: // idle
+            console.log("exo Mover case 0 fired");
+            //let reverseRight = texturesObject.exoTurnRight.slice().reverse();
+            //exoSprite.textures = reverseRight;
+            //exoSprite.textures = texturesObject.exoStep1;
+            exoSprite.xv = 0;
+            exoSprite.yv = 0;
+            break;
+        case 1 :    //vysunutie pil do polohy 1
+            console.log("exo Mover case 1 fired");
+            exoSprite.textures = texturesObject.exoStep2;
+            exoSprite.vx = 0.2;
+            exoSprite.vy = -0.1;
+            break;
+        case 2 :    // vysunutie pil do polohy 2
+            exoSprite.textures = exoTurnRightReverse;
+            exoSprite.vx = 0;
+            exoSprite.vy = 0;
+            break;
+        case 3 :    // vysunutie pil do polohy 3
+            exoSprite.textures = texturesObject.exoTurnLeft;
+            exoSprite.vx = 0;
+            exoSprite.vy = 0;
+            break;
+        case 4 :    // 4 – stiahnutie píl do polohy 0
+        exoSprite.textures = texturesObject.exoTurnLeft;
+        exoSprite.vx = 0;
+        exoSprite.vy = 0;
+        break;
+        case 0 :        // 5 - krok v pred
+            console.log("exo Mover case 5 fired");
+            console.log(jsonData.layout[0].scenar[0].direction);
+            switch (jsonData.layout[0].scenar[0].direction) {
+                case 1 :
+                    exoSprite.textures = texturesObject.exoStep1;
+                    exoSprite.xv = -0.2;
+                    exoSprite.yv = -0.1;
+                    //exoSprite.play();
+                    break;
+                case 2 :
+                    exoSprite.textures = texturesObject.exoStep2;
+                    exoSprite.xv = 0.2;
+                    exoSprite.yv = -0.1;
+                    //exoSprite.play();
+                    break;
+                case 3 :
+                    exoSprite.xv = -0.2;
+                    exoSprite.yv = 0.1;
+                    exoSprite.textures = texturesObject.exoStep3;
+                    //exoSprite.play();
+                    break;
+                case 4 :
+                    exoSprite.xv = 0.2;
+                    exoSprite.yv = 0.1;
+                    exoSprite.textures = texturesObject.exoStep4;
+                    //exoSprite.play();
+                    break;
+            }
+            break;
+        case 6 :        // RESERVE
+            // do nothing
+            break;
+        case 7 :    // otočka o 90° clockwise
+            exoSprite.textures = texturesObject.exoTurnLeft;
+            exoSprite.vx = 0;
+            exoSprite.vy = 0;
+            break;
+        case 8 :    // otočka o 90° counter-clock wise
+            exoSprite.textures = texturesObject.exoTurnLeft;
+            exoSprite.vx = 0;
+            exoSprite.vy = 0;
+            break;
+        default:
+            console.log("nothing happened");
+            break;
+    }
 }
 
 socket.emit('onLoad', sendData);
 socket.on('onRefresh', function(data){
 	if (refreshTracker === true) {  // check if an onRefresh already happened
-        animationChanger(exoSprite);    // do something
-        console.log("onRefresh if1 fired")
+        animationChanger(exoSprite, texturesObject);    // do something
     } else {
 	    refreshTracker = true; // set tracker to true
         jsonData = data;        // write data to the script object
 	    refresh();              // load the textures
-        console.log("onRefresh else1 fired")
     }
 });
 
 function setup() {
     stage.interactive = true;
-    console.log("setup just fired")
 	
 	var rect = new PIXI.Rectangle( 0, 1002, 340, 174 );
 	var spriteTexture = loader.resources["sprite"].texture;
 	var loaderTextures = {
         exoStep1 : loader.resources["exoStep1"].textures,
-        exoTurnRight : loader.resources["exoTurnRight"].textures,
         exoStep2 : loader.resources["exoStep2"].textures,
+        exoStep3 : loader.resources["exoStep3"].textures,
+        exoStep4 : loader.resources["exoStep4"].textures,
+        exoTurnRight : loader.resources["exoTurnRight"].textures,
         exoTurnLeft : loader.resources["exoTurnLeft"].textures,
         exoCutIdleClose1: loader.resources["exoCutIdleClose1"].textures,
         exoCutIdleClose3: loader.resources["exoCutIdleClose3"].textures,
@@ -77,12 +162,14 @@ function setup() {
         exoCuttingFar1: loader.resources["exoCuttingFar1"].textures,
         exoCuttingFar3: loader.resources["exoCuttingFar3"].textures
     };
-	var texturesObject =
+	 texturesObject =
      {
          idle: [],
          exoStep1 : [],
-         exoTurnRight : [],
          exoStep2 : [],
+         exoStep3 : [],
+         exoStep4 : [],
+         exoTurnRight : [],
          exoTurnLeft : [],
          exoCutIdleClose1 : [],
          exoCutIdleClose3 : [],
@@ -95,13 +182,13 @@ function setup() {
     };
 
     spriteTexture.frame = rect;
-    for (var i in loaderTextures) {
+    for (let i in loaderTextures) {
         if (texturesObject.hasOwnProperty(i)) {
-			var count = 0;
-			for(var key in loaderTextures[i])
+			let count = 0;
+			for(let key in loaderTextures[i])
 				if(loaderTextures[i].hasOwnProperty(key))
 					count++;
-			for(var key in loaderTextures[i]) {
+			for(let key in loaderTextures[i]) {
 				if(loaderTextures[i].hasOwnProperty(key)) {
 					texturesObject[i].push(loaderTextures[i][key]);         // create a textures object, whose arrays hold the textures for each animation
 				}
@@ -122,7 +209,6 @@ function setup() {
 	exoSprite.yv = 0;
 	exoSprite.x = 400;
     exoSprite.y = 305;
-    exoSprite.action = "walk1";
 
     exoSprite.play();
 	//sprite.scale.set(0.5, 0.50);
@@ -161,59 +247,15 @@ function setup() {
 	  };
 	  ground.addChild(arrayOfGrass[i]);
 	}
-
-    //exoMover(exoSprite);
     stage.addChild(exoSprite);
-	console.log("addchild(exoSprite) fired");
-    //console.log(exoSprite);
-
 
     function animationLoop() {
 
-       //exoSprite.x += -0.2;
-       // exoSprite.y += -0.1;
         exoSprite.move();
         requestAnimationFrame(animationLoop);
 
 
         renderer.render(stage);
-    }
-
-
-
-    function exoMover(exoSprite) { //check the exoSprite action parameter,
-        // if nothing, do idle,
-        // if walk1 turn exoSprite texture to exoStep1, start velocity for move1,
-        // if
-        switch (jsonData.layout[0].scenar[0].action) {
-            case 0:
-                let reverseRight = texturesObject.exoTurnRight.slice().reverse();
-                exoSprite.textures = reverseRight;
-                //exoSprite.textures = texturesObject.exoStep1;
-                exoSprite.vx = 0.2;
-                exoSprite.vy = 0.1;
-                break;
-            case 1 :
-                exoSprite.textures = texturesObject.exoStep2;
-                exoSprite.vx = 0.2;
-                exoSprite.vy = -0.1;
-                break;
-            case 2 :
-                exoSprite.textures = exoTurnRightReverse;
-                exoSprite.vx = 0;
-                exoSprite.vy = 0;
-                break;
-            case 3 :
-                exoSprite.textures = texturesObject.exoTurnLeft;
-                exoSprite.vx = 0;
-                exoSprite.vy = 0;
-                break;
-            default:
-                exoSprite.textures = texturesObject.idle;
-                exoSprite.vx = 0;
-                exoSprite.vy = 0;
-                break;
-        }
     }
 
     animationLoop();
