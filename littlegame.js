@@ -1,4 +1,4 @@
-﻿const socket = io.connect('http://89.173.200.63:8050');
+﻿const socket = io.connect('http://89.173.200.63:8070'); // hladas login page? 8090 senpai...
 
 var renderer = PIXI.autoDetectRenderer(748, 480, {  // toto je stvorec v ktorom je canvas
   transparent: true,
@@ -43,71 +43,126 @@ function refresh() {
 function animationChanger(exoSprite) {
 
     exoMover(exoSprite);
+    // exoSprite.onLoop( console.log("I just loop a dooped") );
     exoSprite.play();
     animationQueue.push(jsonData.layout[0].scenar[0]);
-    console.log(animationQueue);
 }
 
-function exoMover(exoSprite) { // chooses which animation to play, based on script
-    // if nothing, do idle,
-    // if walk1 turn exoSprite texture to exoStep1
+function exoMover(exoSprite) {               // chooses which animation to play, based on script
+
+    let direction = jsonData.layout[0].scenar[0].direction;
+
     switch (jsonData.layout[0].scenar[0].action) {
-        case 5: // idle
-            console.log("exo Mover case 0 fired");
-            //let reverseRight = texturesObject.exoTurnRight.slice().reverse();
-            //exoSprite.textures = reverseRight;
-            //exoSprite.textures = texturesObject.exoStep1;
+
+        case 5:                                     // idle
             exoSprite.xv = 0;
             exoSprite.yv = 0;
             break;
-        case 1 :    //vysunutie pil do polohy 1
-            console.log("exo Mover case 1 fired");
-            exoSprite.textures = texturesObject.exoStep2;
-            exoSprite.vx = 0.2;
-            exoSprite.vy = -0.1;
+
+        case 1 :                                //vysunutie pil do polohy 1
+            switch (direction) {
+
+                case 1:
+                    exoSprite.textures = texturesObject.exoCutIdleClose1;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 2:
+                    exoSprite.textures = texturesObject.exoCutIdleClose2;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 3:
+                    exoSprite.textures = texturesObject.exoCutIdleClose3;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 4:
+                    exoSprite.textures = texturesObject.exoCutIdleClose4;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+            }
             break;
-        case 2 :    // vysunutie pil do polohy 2
-            exoSprite.textures = exoTurnRightReverse;
-            exoSprite.vx = 0;
-            exoSprite.vy = 0;
+
+        case 2 :                                                        // vysunutie pil do polohy 2
+            switch (direction) {
+
+                case 1:
+                    exoSprite.textures = texturesObject.exoCutIdleClose1;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 2:
+                    exoSprite.textures = texturesObject.exoCutIdleClose2;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 3:
+                    exoSprite.textures = texturesObject.exoCutIdleClose3;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 4:
+                    exoSprite.textures = texturesObject.exoCutIdleClose4;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+            }
             break;
-        case 3 :    // vysunutie pil do polohy 3
-            exoSprite.textures = texturesObject.exoTurnLeft;
-            exoSprite.vx = 0;
-            exoSprite.vy = 0;
+
+        case 3 :                                                             // vysunutie pil do polohy 3
+            switch (direction) {
+
+                case 1:
+                    exoSprite.textures = texturesObject.exoCutIdleClose1;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 2:
+                    exoSprite.textures = texturesObject.exoCutIdleClose2;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 3:
+                    exoSprite.textures = texturesObject.exoCutIdleClose3;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+                case 4:
+                    exoSprite.textures = texturesObject.exoCutIdleClose4;
+                    exoSprite.vx = 0;
+                    exoSprite.vy = 0;
+                    break;
+            }
             break;
-        case 4 :    // 4 – stiahnutie píl do polohy 0
-        exoSprite.textures = texturesObject.exoTurnLeft;
-        exoSprite.vx = 0;
-        exoSprite.vy = 0;
-        break;
-        case 0 :        // 5 - krok v pred
-            console.log("exo Mover case 5 fired");
-            console.log(jsonData.layout[0].scenar[0].direction);
-            switch (jsonData.layout[0].scenar[0].direction) {
+
+        case 4 :                                                // 4 – stiahnutie píl do polohy 0
+                // << ?? << stiahnutie do nula z
+            break;
+
+        case 0 :                                                // 5 - krok v pred
+            switch (direction) {
+
                 case 1 :
                     exoSprite.textures = texturesObject.exoStep1;
                     exoSprite.xv = -0.2;
                     exoSprite.yv = -0.1;
-                    //exoSprite.play();
                     break;
                 case 2 :
                     exoSprite.textures = texturesObject.exoStep2;
                     exoSprite.xv = 0.2;
                     exoSprite.yv = -0.1;
-                    //exoSprite.play();
                     break;
                 case 3 :
                     exoSprite.xv = -0.2;
                     exoSprite.yv = 0.1;
                     exoSprite.textures = texturesObject.exoStep3;
-                    //exoSprite.play();
                     break;
                 case 4 :
                     exoSprite.xv = 0.2;
                     exoSprite.yv = 0.1;
                     exoSprite.textures = texturesObject.exoStep4;
-                    //exoSprite.play();
                     break;
             }
             break;
@@ -115,7 +170,9 @@ function exoMover(exoSprite) { // chooses which animation to play, based on scri
             // do nothing
             break;
         case 7 :    // otočka o 90° clockwise
-            exoSprite.textures = texturesObject.exoTurnLeft;
+                    // najdi exoSprite.direction, zapni
+            let reverseRight = texturesObject.exoTurnRight.slice().reverse();
+            exoSprite.textures = reverseRight;
             exoSprite.vx = 0;
             exoSprite.vy = 0;
             break;
@@ -124,8 +181,7 @@ function exoMover(exoSprite) { // chooses which animation to play, based on scri
             exoSprite.vx = 0;
             exoSprite.vy = 0;
             break;
-        default:
-            console.log("nothing happened");
+        default:        // do nothing
             break;
     }
 }
@@ -134,10 +190,11 @@ socket.emit('onLoad', sendData);
 socket.on('onRefresh', function(data){
 	if (refreshTracker === true) {  // check if an onRefresh already happened
         animationChanger(exoSprite, texturesObject);    // do something
+        jsonData = data;
     } else {
 	    refreshTracker = true; // set tracker to true
         jsonData = data;        // write data to the script object
-	    refresh();              // load the textures
+        refresh();              // load the textures
     }
 });
 
@@ -194,29 +251,37 @@ function setup() {
 				}
 			}
         }
-    };
+    }
 
-	exoSprite = new PIXI.extras.AnimatedSprite(texturesObject.exoStep1);
+	exoSprite = new PIXI.extras.AnimatedSprite(texturesObject.exoCutIdleFar1);
 	exoSprite.anchor.set(0.4);
+	exoSprite.interactive = true;
 	exoSprite.move = function () {
 
 	    exoSprite.x += exoSprite.xv;
 	    exoSprite.y += exoSprite.yv;
+    };
+	function exoClick() {
+	    console.log("click");
+            socket.emit("onClick");
     }
-	exoSprite.animationSpeed = 0.5;
-	exoSprite.scale.set(0.4, 0.4);
+	exoSprite.on("click", exoClick);
+	exoSprite.loop = true;
+    exoSprite.onComplete = function() { console.log("stahp") };
+	exoSprite.animationSpeed = 0.6;
+	exoSprite.scale.set(0.6, 0.6);
 	exoSprite.xv = 0;
 	exoSprite.yv = 0;
+	exoSprite.direction = 1;
 	exoSprite.x = 400;
     exoSprite.y = 305;
 
     exoSprite.play();
-	//sprite.scale.set(0.5, 0.50);
 
 	var arrayOfSprites = [];
 	for (var i = 0; i < jsonData.layout[0].square.length; i++) {
 	  arrayOfSprites[i] = new PIXI.Sprite(spriteTexture);
-	  arrayOfSprites[i].scale.set(0.5, 0.5);
+	  arrayOfSprites[i].scale.set(0.7, 0.7);
 	  arrayOfSprites[i].anchor.x = 0.5;
 	  arrayOfSprites[i].anchor.y = 0.5;
 	  arrayOfSprites[i].x = jsonData.layout[0].square[i].pos.x;
@@ -225,26 +290,17 @@ function setup() {
 	}
 
 	var rectangleType = jsonData.layout[0].type;
-	var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110)
+	var groundRect = new PIXI.Rectangle(types[rectangleType].baseX, types[rectangleType].baseY, 200, 110);
 	var arrayOfGrass = [];
 	var groundtexture = new PIXI.Texture(spriteTexture.baseTexture, groundRect);
-	//groundtexture.frame = groundRect;
 	for (var i = 0; i < jsonData.layout[0].square.length; i++) {
 	  arrayOfGrass[i] = new PIXI.Sprite(groundtexture);
-	  //arrayOfSprites[i].scale.set(0.5, 0.5);
+	  arrayOfSprites[i].scale.set(0.5, 0.5);
 	  arrayOfGrass[i].anchor.x = 0.5;
 	  arrayOfGrass[i].anchor.y = 0.5;
 	  arrayOfGrass[i].x = jsonData.layout[0].square[i].pos.x;
 	  arrayOfGrass[i].y = jsonData.layout[0].square[i].pos.y;
 	  arrayOfGrass[i].interactive = true;
-	  arrayOfGrass[i].clickCounter = 0;
-	  arrayOfGrass[i].click = function() {
-		if (this.clickCounter >= 3) {
-		  this.clickCounter = 0;
-		  this.visible = false;
-		}
-		this.clickCounter += 1;
-	  };
 	  ground.addChild(arrayOfGrass[i]);
 	}
     stage.addChild(exoSprite);
@@ -264,67 +320,6 @@ function setup() {
 const types = {
     2: {baseX: 525, baseY: 1104}
 };
-
-// const jsonData = { layout:
-//    [ { idx: { x: 0, y: 0 },
-//        pos: { x: 15, y: 240 },
-//        type: 2,
-//        oid: '00',
-//        square:
-//         [ { pos: { x: 325, y: 130 },
-//             idx: { x: 1, y: 1 },
-//             oid: '0011',
-//             type: 10010103,
-//             rm: false,
-//             hw: true },
-//           { pos: { x: 250, y: 170 },
-//             idx: { x: 1, y: 2 },
-//             oid: '0012',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 175, y: 210 },
-//             idx: { x: 1, y: 3 },
-//             oid: '0013',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 400, y: 170 },
-//             idx: { x: 2, y: 1 },
-//             oid: '0021',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 325, y: 210 },
-//             idx: { x: 2, y: 2 },
-//             oid: '0022',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 250, y: 250 },
-//             idx: { x: 2, y: 3 },
-//             oid: '0023',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 475, y: 210 },
-//             idx: { x: 3, y: 1 },
-//             oid: '0031',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 400, y: 250 },
-//             idx: { x: 3, y: 2 },
-//             oid: '0032',
-//             type: 10010103,
-//             rm: false,
-//             hw: false },
-//           { pos: { x: 320, y: 290 },
-//             idx: { x: 3, y: 3 },
-//             oid: '0033',
-//             type: 10010103,
-//             rm: false,
-//             hw: false } ] } ] }
 
             // ⠰⡿⠿⠛⠛⠻⠿⣷
             // ⠀⠀⠀⠀⠀⠀⣀⣄⡀⠀⠀⠀⠀⢀⣀⣀⣤⣄⣀⡀
